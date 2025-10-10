@@ -1,15 +1,17 @@
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
+import cors from "cors";
 import connectDB  from "./config/db.js";
 import authRoute  from "./routes/auth.route.js";
 import bookRoute from "./routes/book.route.js";
+
+dotenv.config();
+
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-dotenv.config();
 
 app.use("/api/auth", authRoute);
 app.use("/api/books", bookRoute);

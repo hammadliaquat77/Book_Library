@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const bookSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     author: {
         type: String,
@@ -22,6 +23,11 @@ const bookSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
+    image: {
+        type: String,
+        required: true
+    }
+    
 }, {timestamps: true});
 
 export const Book = mongoose.model("Book", bookSchema);
