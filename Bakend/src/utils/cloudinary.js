@@ -20,7 +20,7 @@ dotenv.config();
                 resource_type: "auto"
             })
 
-            console.log("Uploaded to Cloudinary:", Result.url);
+            // console.log("Uploaded to Cloudinary:", Result.url);
             return Result
             
         } catch (error) {
