@@ -100,15 +100,33 @@
 // export {addBook, getAllBook, getUpdateBook, getdDeleteBook, getSingleBook};
 
 
-// deep seek
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import {Book} from "../models/books.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const addBook = async (req, res) => {
     try {
-        const {title, author, description, year} = req.body; // ❌ image hata diya
-        let imageUrl = ""; // ✅ let use kiya
+        const {title, author, description, year} = req.body;
+        let imageUrl = "";
 
         const existingBook = await Book.findOne({title , user: req.user._id})
         if (existingBook) {
@@ -135,23 +153,24 @@ const addBook = async (req, res) => {
             author,
             description,
             year,
-            image: imageUrl, // ✅ yahan imageUrl use kiya
+            image: imageUrl, 
             user: req.user._id
         });
 
-        // ❌ newBook.save() REMOVE - create() automatically save karta hai
+        await newBook.save()
+
         res.status(201).json({
             message: "Book successfully added!",
             book: newBook
         });
 
     } catch (error) {
-        console.error("❌ Error adding book:", error);
+        console.error("Error adding book:", error);
         res.status(500).json({ message: error.message });    
     }
 }
 
-// ... (baaki functions same rahenge)
+
 const getAllBook = async (req, res)=> {
     try {
         const books = await Book.find({ user: req.user._id});
@@ -179,14 +198,14 @@ const getUpdateBook = async (req, res) => {
     try {
         const { id } = req.params;
         
-        console.log("🔄 Update request received:", {
-            id: id,
-            body: req.body,
-            hasFile: !!req.file,
-            filePath: req.file?.path
-        });
+        // console.log("🔄 Update request received:", {
+        //     id: id,
+        //     body: req.body,
+        //     hasFile: !!req.file,
+        //     filePath: req.file?.path
+        // });
 
-        // ✅ Create update object with text fields from req.body
+        // Create update object with text fields from req.body
         const updateData = {
             title: req.body.title,
             author: req.body.author,
@@ -203,23 +222,23 @@ const getUpdateBook = async (req, res) => {
                 
                 if (cloudinaryResult && cloudinaryResult.url) {
                     updateData.image = cloudinaryResult.url;
-                    console.log("✅ New image URL:", updateData.image);
+                    console.log("New image URL:", updateData.image);
                 } else {
-                    console.log("❌ Cloudinary upload failed - no URL returned");
+                    console.log("Cloudinary upload failed - no URL returned");
                     return res.status(400).json({ message: "Image upload failed" });
                 }
             } catch (uploadError) {
-                console.error("❌ Image upload error:", uploadError);
+                console.error("Image upload error:", uploadError);
                 return res.status(400).json({ message: "Image upload failed: " + uploadError.message });
             }
         } else {
-            console.log("ℹ️ No new image provided, keeping current image");
+            console.log("No new image provided, keeping current image");
             // Image field update nahi karenge - current image rahegi
         }
 
-        console.log("📝 Final update data:", updateData);
+        console.log("Final update data:", updateData);
 
-        // ✅ Update book in database
+        //  Update book in database
         const updateBook = await Book.findByIdAndUpdate(
             { _id: id, user: req.user._id }, 
             updateData, 
@@ -230,11 +249,11 @@ const getUpdateBook = async (req, res) => {
             return res.status(400).json({ message: "Book not found" });
         }
 
-        console.log("✅ Book updated successfully:", updateBook.title);
+        console.log("Book updated successfully:", updateBook.title);
         res.status(200).json(updateBook);
 
     } catch (error) {
-        console.error("❌ Update book error:", error);
+        console.error("Update book error:", error);
         res.status(500).json({ message: error.message });
     }
 }
